@@ -1,6 +1,6 @@
 public class GomokuCPU {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Throwable {
 		int draws = 0;
 		int blackWins = 0;
 		int whiteWins = 0;
@@ -16,7 +16,8 @@ public class GomokuCPU {
 			int x, y;
 			do {
 				black = !black;
-				//printOut(board);
+				printOut(board);
+				System.out.println("\n" + evaluatePosition(board, black));
 				do {
 					x = (int)(Math.random() * board.length) + 1;
 					y = (int)(Math.random() * board.length) + 1;
@@ -27,6 +28,7 @@ public class GomokuCPU {
 				//System.out.println();
 				if (black) board[x - 1][y - 1] = -1;
 				else board[x - 1][y - 1] = 1;
+				Thread.sleep(1000);
 			} while (!fiveInARow(board, x - 1, y - 1, black) && !isFilled(board));
 			//printOut(board);
 			if (isFilled(board)) {
@@ -58,6 +60,8 @@ public class GomokuCPU {
 		}
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board.length; j++) {
+				int points = 0;
+				int points2 = 0;
 				if (checked[i][j] || board[i][j] == 0) continue;
 				checked[i][j] = true;
 				if (board[i][j] == -1) {
@@ -65,13 +69,141 @@ public class GomokuCPU {
 						if (i - k < 0) break;
 						checked[i - k][j] = true;
 						if (board[i - k][j] == -1) {
-							
+							points += 2;
 						}
+						if (board[i - k][j] == 1) points /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (i - k < 0 || j - k < 0) break;
+						checked[i - k][j - k] = true;
+						if (board[i - k][j - k] == -1) {
+							points += 2;
+						}
+						if (board[i - k][j - k] == 1) points /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (i - k < 0 || j + k >= board.length) break;
+						checked[i - k][j + k] = true;
+						if (board[i - k][j + k] == -1) {
+							points += 2;
+						}
+						if (board[i - k][j + k] == 1) points /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (i + k >= board.length || j + k >= board.length) break;
+						checked[i + k][j + k] = true;
+						if (board[i + k][j + k] == -1) {
+							points += 2;
+						}
+						if (board[i + k][j + k] == 1) points /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (i + k >= board.length || j - k < 0) break;
+						checked[i + k][j - k] = true;
+						if (board[i + k][j - k] == -1) {
+							points += 2;
+						}
+						if (board[i + k][j - k] == 1) points /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (i + k >= board.length) break;
+						checked[i + k][j] = true;
+						if (board[i + k][j] == -1) {
+							points += 2;
+						}
+						if (board[i + k][j] == 1) points /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (j - k < 0) break;
+						checked[i][j - k] = true;
+						if (board[i][j - k] == -1) {
+							points += 2;
+						}
+						if (board[i][j - k] == 1) points /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (j + k >= board.length) break;
+						checked[i][j + k] = true;
+						if (board[i][j + k] == -1) {
+							points += 2;
+						}
+						if (board[i][j + k] == 1) points /= 2;
 					}
 				}
+				if (board[i][j] == 1) {
+					for (int k = 1; k < 5; k++) {
+						if (i - k < 0) break;
+						checked[i - k][j] = true;
+						if (board[i - k][j] == 1) {
+							points2 += 2;
+						}
+						if (board[i - k][j] == -1) points2 /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (i - k < 0 || j - k < 0) break;
+						checked[i - k][j - k] = true;
+						if (board[i - k][j - k] == 1) {
+							points2 += 2;
+						}
+						if (board[i - k][j - k] == -1) points2 /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (i - k < 0 || j + k >= board.length) break;
+						checked[i - k][j + k] = true;
+						if (board[i - k][j + k] == 1) {
+							points2 += 2;
+						}
+						if (board[i - k][j + k] == -1) points2 /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (i + k >= board.length || j + k >= board.length) break;
+						checked[i + k][j + k] = true;
+						if (board[i + k][j + k] == 1) {
+							points2 += 2;
+						}
+						if (board[i + k][j + k] == -1) points2 /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (i + k >= board.length || j - k < 0) break;
+						checked[i + k][j - k] = true;
+						if (board[i + k][j - k] == 1) {
+							points2 += 2;
+						}
+						if (board[i + k][j - k] == -1) points2 /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (i + k >= board.length) break;
+						checked[i + k][j] = true;
+						if (board[i + k][j] == 1) {
+							points2 += 2;
+						}
+						if (board[i + k][j] == -1) points2 /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (j - k < 0) break;
+						checked[i][j - k] = true;
+						if (board[i][j - k] == 1) {
+							points2 += 2;
+						}
+						if (board[i][j - k] == -1) points2 /= 2;
+					}
+					for (int k = 1; k < 5; k++) {
+						if (j + k >= board.length) break;
+						checked[i][j + k] = true;
+						if (board[i][j + k] == 1) {
+							points2 += 2;
+						}
+						if (board[i][j + k] == -1) points2 /= 2;
+					}
+				}
+				blackPoints += points;
+				whitePoints += points2;
 			}
 		}
-		return 0.0;
+		if (black) blackPoints += 2;
+		else whitePoints += 2;
+		if (blackPoints == 0) return whitePoints;
+		return (double)(blackPoints - whitePoints) / blackPoints;
 	}
 
 	public static boolean isFilled(int[][] board) {
